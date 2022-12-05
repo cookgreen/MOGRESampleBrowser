@@ -1,0 +1,13 @@
+material ThumbPhysxDemo_Cloth
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Thumb_Cloth.png
+			}
+		}
+	}
+}
