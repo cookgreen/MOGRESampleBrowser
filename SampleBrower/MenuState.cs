@@ -114,7 +114,7 @@ namespace SampleBrowser
             selectedSampleName = sampleChooseMenu.getSelectedItem();
             float carouselOffset = sampleChooseMenu.getSelectionIndex() - carouselPlace;
             if ((carouselOffset <= 0.001) && (carouselOffset >= -0.001)) carouselPlace = sampleChooseMenu.getSelectionIndex();
-            else carouselPlace += carouselOffset * SampleBrowser.Helper.Clamp<float>(evt.timeSinceLastFrame * 15.0f, -1.0f, 1.0f);
+            else carouselPlace += carouselOffset * Helper.Clamp<float>(evt.timeSinceLastFrame * 15.0f, -1.0f, 1.0f);
 
             for (int i = 0; i < sampleThumbOverlyContainers.Count; i++)
             {
@@ -242,7 +242,7 @@ namespace SampleBrowser
             if (arg.state.Z.rel != 0 && sampleChooseMenu.getNumItems() != 0)
             {
                 float newIndex = sampleChooseMenu.getSelectionIndex() - arg.state.Z.rel / Mogre.Math.Abs((float)arg.state.Z.rel);
-                float finalIndex = SampleBrowser.Helper.Clamp<float>(newIndex, 0.0f, (float)(sampleChooseMenu.getNumItems() - 1));
+                float finalIndex = Helper.Clamp<float>(newIndex, 0.0f, (float)(sampleChooseMenu.getNumItems() - 1));
 
                 sampleChooseMenu.selectItem((uint)finalIndex);
                 lbSampleTitle.setCaption(samples[(int)finalIndex].Name);

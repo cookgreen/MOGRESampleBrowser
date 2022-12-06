@@ -7,6 +7,8 @@ namespace SampleInterface
 {
     public interface ISample
     {
+        event Action SampleStopped;
+
         string Name { get; }
 
         string Desc { get; }
@@ -17,6 +19,12 @@ namespace SampleInterface
 
         void Start();
 
+        void Pause();
+
+        void Resume();
+
         void Stop();
+
+        void Update(float timeSinceLastFrame);
     }
 }
