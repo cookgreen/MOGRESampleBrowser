@@ -31,13 +31,6 @@ namespace SampleBrowser
             OgreFramework.Instance.keyboard.KeyPressed += Keyboard_KeyPressed;
         }
 
-        private void buildGUI()
-        {
-            btnResumeSample = OgreFramework.Instance.trayMgr.createButton(TrayLocation.TL_RIGHT, "btnResumeSample", "Resume");
-            btnStopSample = OgreFramework.Instance.trayMgr.createButton(TrayLocation.TL_RIGHT, "btnStopSample", "Stop");
-            btnQuitApp = OgreFramework.Instance.trayMgr.createButton(TrayLocation.TL_RIGHT, "btnQuitApp", "Quit");
-        }
-
         public override void Resume()
         {
         }

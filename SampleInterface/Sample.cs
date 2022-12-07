@@ -12,6 +12,9 @@ namespace PhysxCandyWrapperTutorials
 {
     public class Sample : SdkTrayListener, ISample
     {
+        private Mogre.Vector3 camTranslateVector;
+        private float moveScale;
+
         protected Root root;
         protected Viewport viewport;
         protected SdkTrayManager trayManager;
@@ -31,6 +34,8 @@ namespace PhysxCandyWrapperTutorials
 
         public Sample()
         {
+            moveScale = 1;
+
             hiddenOverlays = new List<Overlay>();
             actorSceneNodes = new List<ActorSceneNode>();
         }
@@ -81,6 +86,8 @@ namespace PhysxCandyWrapperTutorials
 
         protected virtual bool Keyboard_KeyReleased(MOIS.KeyEvent arg)
         {
+            camTranslateVector = new Mogre.Vector3();
+
             return true;
         }
 
@@ -112,10 +119,56 @@ namespace PhysxCandyWrapperTutorials
 
         public virtual void Update(float timeSinceLastFrame)
         {
+            getInput();
+
+            moveCamera();
+
             foreach(var actorNode in actorSceneNodes)
             {
                 actorNode.Update(timeSinceLastFrame);
             }
+        }
+
+        public void moveCamera()
+        {
+            if (keyboard.IsKeyDown(KeyCode.KC_LSHIFT))
+                camera.MoveRelative(camTranslateVector);
+            camera.MoveRelative(camTranslateVector / 10);
+        }
+        public void getInput()
+        {
+            if (keyboard.IsKeyDown(KeyCode.KC_A))
+                camTranslateVector.x = -moveScale;
+
+            if (keyboard.IsKeyDown(KeyCode.KC_D))
+                camTranslateVector.x = moveScale;
+
+            if (keyboard.IsKeyDown(KeyCode.KC_W))
+                camTranslateVector.z = -moveScale;
+
+            if (keyboard.IsKeyDown(KeyCode.KC_S))
+                camTranslateVector.z = moveScale;
+
+            if (keyboard.IsKeyDown(KeyCode.KC_Q))
+                camTranslateVector.y = -moveScale;
+
+            if (keyboard.IsKeyDown(KeyCode.KC_E))
+                camTranslateVector.y = moveScale;
+
+            //camera roll
+            if (keyboard.IsKeyDown(KeyCode.KC_Z))
+            {
+                camera.Roll(new Angle(-moveScale));
+            }
+
+            if (keyboard.IsKeyDown(KeyCode.KC_X))
+            {
+                camera.Roll(new Angle(moveScale));
+            }
+
+            //reset roll
+            if (keyboard.IsKeyDown(KeyCode.KC_C))
+                camera.Roll(-(camera.RealOrientation.Roll));
         }
     }
 }

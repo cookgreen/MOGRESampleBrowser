@@ -13,10 +13,9 @@ namespace PhysxCandyWrapperTutorials
 {
     public class SampleFlag : Sample
     {
-        private Actor planeActor;
         private Scene scene;
         private Physics physics;
-        private SelectMenu clothSelectMenu;
+        private SelectMenu curtainSelectMenu;
 
         private ClothEntityRenderable clothEntRenderable;
 
@@ -61,10 +60,10 @@ namespace PhysxCandyWrapperTutorials
             camera.NearClipDistance = 0.02f;
             camera.FarClipDistance = 1000.0f;
 
-            clothSelectMenu = trayManager.createLongSelectMenu(TrayLocation.TL_RIGHT, "MoveMethod", "Method", 300, 200, 5);
-            clothSelectMenu.addItem("setPosition");
-            clothSelectMenu.addItem("attachVertexToGlobalPosition");
-            clothSelectMenu.addItem("addForceAtVertex");
+            curtainSelectMenu = trayManager.createLongSelectMenu(TrayLocation.TL_RIGHT, "MoveMethod", "Method", 300, 200, 5);
+            curtainSelectMenu.addItem("setPosition");
+            curtainSelectMenu.addItem("attachVertexToGlobalPosition");
+            curtainSelectMenu.addItem("addForceAtVertex");
 
             setupPhysics();
         }
@@ -82,11 +81,11 @@ namespace PhysxCandyWrapperTutorials
             sceneMat.StaticFriction = 0.9f;
             sceneMat.DynamicFriction = 0.5f;
 
-            planeActor = scene.CreateActor(new ActorDesc(new PlaneShapeDesc()));
+            scene.CreateActor(new ActorDesc(new PlaneShapeDesc()));
 
             makeBox(new Vector3(0, 0.5f, 0.5f));
 
-            makeCloth(new Vector3(5, 4, 0));
+            makeCloth(new Vector3(0, 3, 0));
         }
 
         private void makeBox(Vector3 globalPose)
@@ -114,12 +113,12 @@ namespace PhysxCandyWrapperTutorials
 
         private void makeCloth(Vector3 barPosition)
         {
-            Vector3 pos = barPosition;
+            Vector3 clothPos = barPosition;
             Vector2 clothSize = new Vector2(8, 4);
 
-            pos.x -= clothSize.x * 0.5f;
+            clothPos.x -= clothSize.x * 0.5f;
 
-            Vector3 holderPos = pos;
+            Vector3 holderPos = clothPos;
             holderPos.x += clothSize.x * 0.5f; ;
             holderPos.y += 0.05f;
             holderPos.z -= 0.05f;
@@ -130,7 +129,7 @@ namespace PhysxCandyWrapperTutorials
             holderShapeDesc.Dimensions = new Vector3(0.5f * 10, 0.5f * 0.1f, 0.5f * 10.1f);
 
             ActorDesc holsterActorDesc = new ActorDesc();
-            holsterActorDesc.Body = null;
+            holsterActorDesc.Body = holsterBodyDesc;
             holsterActorDesc.Shapes.Add(holderShapeDesc);
             Actor holsterActor = scene.CreateActor(holsterActorDesc);
             holsterActor.GlobalPosition = holderPos;
@@ -138,30 +137,31 @@ namespace PhysxCandyWrapperTutorials
             Entity holsterEnt = sceneManager.CreateEntity("cube.mesh");
             SceneNode holsterNode = sceneManager.RootSceneNode.CreateChildSceneNode();
             holsterNode.AttachObject(holsterEnt);
-            holsterNode.Scale(0.1f, 0.001f, 0.001f);
+            //holsterNode.Scale(0.1f, 0.001f, 0.001f);
 
             ActorSceneNode holsterActorSceneNode = new ActorSceneNode(holsterActor, holsterNode);
             actorSceneNodes.Add(holsterActorSceneNode);
 
 
-            BodyDesc clothBodyDesc = new BodyDesc();
-            clothBodyDesc.Mass = 0;
-            ActorDesc clothActorDesc = new ActorDesc();
-            clothActorDesc.Body = holsterBodyDesc;
-            BoxShapeDesc clothBoxShapeDesc = new BoxShapeDesc();
-            clothActorDesc.Shapes.Add(clothBoxShapeDesc);
-            Actor clothActor = scene.CreateActor(clothActorDesc);
-
-            clothActor.GlobalPosition = pos;
+            D6JointDesc d6Desc = new D6JointDesc();
+            d6Desc.SetActors(null, holsterActor);
+            d6Desc.GlobalAnchor = holderPos;
+            d6Desc.GlobalAxis = new Vector3(1, 0, 0);
+            d6Desc.TwistMotion = D6JointMotions.Locked;
+            d6Desc.Swing1Motion = D6JointMotions.Locked;
+            d6Desc.Swing2Motion = D6JointMotions.Locked;
+            d6Desc.XMotion = D6JointMotions.Free;
+            d6Desc.YMotion = D6JointMotions.Locked;
+            d6Desc.ZMotion = D6JointMotions.Locked;
+            scene.CreateJoint(d6Desc);
 
             ClothDesc cd = new ClothDesc();
-            MeshManager.Singleton.CreatePlane("flag",
-            ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, new Plane(Vector3.UNIT_Z, 0), clothSize.x, clothSize.y, 50, 50, true, 1, 1, 1, Vector3.UNIT_Y);
+            MeshManager.Singleton.CreatePlane("curtain",
+            ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, new Plane(Vector3.UNIT_Z, 0), clothSize.x, clothSize.y, 50, 50, true, 1, 1, 1, Vector3.NEGATIVE_UNIT_X);
             
-            Entity clothEnt = sceneManager.CreateEntity("Flag", "flag");
+            Entity clothEnt = sceneManager.CreateEntity("Curtain", "curtain");
             clothEnt.SetMaterialName("wales");
-
-            SceneNode clothSceneNode = sceneManager.RootSceneNode.CreateChildSceneNode();
+            SceneNode clothSceneNode = holsterNode.CreateChildSceneNode();
             clothSceneNode.AttachObject(clothEnt);
 
             MeshPtr mp = clothEnt.GetMesh();
@@ -170,13 +170,10 @@ namespace PhysxCandyWrapperTutorials
             cd.ClothMesh = CookClothMesh(meshdata, "nug.xcl");
             cd.Thickness = 0.2f;
             cd.Friction = 0.5f;
-            cd.GlobalPose.SetTrans(pos);
+            //cd.GlobalPose.SetTrans(clothPos);
 
             Cloth cloth = scene.CreateCloth(cd);
-            cloth.AttachToShape(planeActor.Shapes[0], ClothAttachmentFlags.Twoway);
-
-            ActorSceneNode clothActorSceneNode = new ActorSceneNode(clothActor, clothSceneNode);
-            actorSceneNodes.Add(clothActorSceneNode);
+            cloth.AttachToShape(holsterActor.Shapes[0], ClothAttachmentFlags.Twoway);
 
             clothEntRenderable = new ClothEntityRenderable(cloth, clothEnt);
         }
