@@ -14,6 +14,7 @@ namespace PhysxCandyWrapperTutorials
     {
         private Mogre.Vector3 camTranslateVector;
         private float moveScale;
+        private bool isRightMouseDown;
 
         protected Root root;
         protected Viewport viewport;
@@ -100,6 +101,11 @@ namespace PhysxCandyWrapperTutorials
         {
             trayManager.injectMouseUp(arg, id);
 
+            if (id == MouseButtonID.MB_Right)
+            {
+                isRightMouseDown = false;
+            }
+
             return true;
         }
 
@@ -107,12 +113,26 @@ namespace PhysxCandyWrapperTutorials
         {
             trayManager.injectMouseDown(arg, id);
 
+            if (id == MouseButtonID.MB_Right)
+            {
+                isRightMouseDown = true;
+            }
+
             return true;
         }
 
         protected virtual bool Mouse_MouseMoved(MOIS.MouseEvent arg)
         {
             trayManager.injectMouseMove(arg);
+
+            if (isRightMouseDown)
+            {
+                Degree deCameraYaw = new Degree(arg.state.X.rel * -0.1f);
+                camera.Yaw(deCameraYaw);
+                Degree deCameraPitch = new Degree(arg.state.Y.rel * -0.1f);
+                camera.Pitch(deCameraPitch);
+            }
+
 
             return true;
         }

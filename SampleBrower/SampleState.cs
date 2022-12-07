@@ -13,10 +13,6 @@ namespace SampleBrowser
         private bool isQuit;
         private ISample sample;
 
-        private Button btnResumeSample;
-        private Button btnStopSample;
-        private Button btnQuitApp;
-
         public SampleState()
         {
             isQuit = false;

@@ -1,4 +1,5 @@
 ﻿using Mogre;
+using Mogre.Helpers;
 using Mogre.PhysX;
 using Mogre_Procedural.MogreBites;
 using org.ogre.framework;
@@ -85,7 +86,7 @@ namespace PhysxCandyWrapperTutorials
 
             makeBox(new Vector3(0, 0.5f, 0.5f));
 
-            makeCloth(new Vector3(0, 3, 0));
+            makeCloth(new Vector3(0, 4, 0.5f));
         }
 
         private void makeBox(Vector3 globalPose)
@@ -116,17 +117,12 @@ namespace PhysxCandyWrapperTutorials
             Vector3 clothPos = barPosition;
             Vector2 clothSize = new Vector2(8, 4);
 
-            clothPos.x -= clothSize.x * 0.5f;
-
-            Vector3 holderPos = clothPos;
-            holderPos.x += clothSize.x * 0.5f; ;
-            holderPos.y += 0.05f;
-            holderPos.z -= 0.05f;
+            Vector3 holderPos = new Vector3(0, 4, 0);
 
             BodyDesc holsterBodyDesc = new BodyDesc();
             holsterBodyDesc.Mass = 10;
             BoxShapeDesc holderShapeDesc = new BoxShapeDesc();
-            holderShapeDesc.Dimensions = new Vector3(0.5f * 10, 0.5f * 0.1f, 0.5f * 10.1f);
+            holderShapeDesc.Dimensions = new Vector3(0.5f * 10, 0.5f * 0.1f, 0.5f * 0.1f);
 
             ActorDesc holsterActorDesc = new ActorDesc();
             holsterActorDesc.Body = holsterBodyDesc;
@@ -137,7 +133,7 @@ namespace PhysxCandyWrapperTutorials
             Entity holsterEnt = sceneManager.CreateEntity("cube.mesh");
             SceneNode holsterNode = sceneManager.RootSceneNode.CreateChildSceneNode();
             holsterNode.AttachObject(holsterEnt);
-            //holsterNode.Scale(0.1f, 0.001f, 0.001f);
+            holsterNode.Scale(0.1f, 0.001f, 0.001f);
 
             ActorSceneNode holsterActorSceneNode = new ActorSceneNode(holsterActor, holsterNode);
             actorSceneNodes.Add(holsterActorSceneNode);
@@ -156,25 +152,22 @@ namespace PhysxCandyWrapperTutorials
             scene.CreateJoint(d6Desc);
 
             ClothDesc cd = new ClothDesc();
-            MeshManager.Singleton.CreatePlane("curtain",
-            ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME, new Plane(Vector3.UNIT_Z, 0), clothSize.x, clothSize.y, 50, 50, true, 1, 1, 1, Vector3.NEGATIVE_UNIT_X);
-            
+
+            MeshPtr mp = MeshManager.Singleton.CreatePlane("curtain", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
+                new Plane(Vector3.UNIT_Z, 0), clothSize.y, clothSize.x, 50, 50);
             Entity clothEnt = sceneManager.CreateEntity("Curtain", "curtain");
+            SceneNode clothSceneNode = sceneManager.RootSceneNode.CreateChildSceneNode();
             clothEnt.SetMaterialName("wales");
-            SceneNode clothSceneNode = holsterNode.CreateChildSceneNode();
             clothSceneNode.AttachObject(clothEnt);
 
-            MeshPtr mp = clothEnt.GetMesh();
             StaticMeshData meshdata = new StaticMeshData(mp);
-
             cd.ClothMesh = CookClothMesh(meshdata, "nug.xcl");
             cd.Thickness = 0.2f;
             cd.Friction = 0.5f;
-            //cd.GlobalPose.SetTrans(clothPos);
-
+            cd.GlobalPose.SetTrans(clothPos);
             Cloth cloth = scene.CreateCloth(cd);
             cloth.AttachToShape(holsterActor.Shapes[0], ClothAttachmentFlags.Twoway);
-
+            
             clothEntRenderable = new ClothEntityRenderable(cloth, clothEnt);
         }
 
