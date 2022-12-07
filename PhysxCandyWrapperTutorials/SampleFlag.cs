@@ -1,5 +1,4 @@
 ﻿using Mogre;
-using Mogre.Helpers;
 using Mogre.PhysX;
 using Mogre_Procedural.MogreBites;
 using org.ogre.framework;
@@ -86,7 +85,7 @@ namespace PhysxCandyWrapperTutorials
 
             makeBox(new Vector3(0, 0.5f, 0.5f));
 
-            makeCloth(new Vector3(0, 4, 0.5f));
+            makeCloth(new Vector3(0, 4, 0));
         }
 
         private void makeBox(Vector3 globalPose)
@@ -115,9 +114,9 @@ namespace PhysxCandyWrapperTutorials
         private void makeCloth(Vector3 barPosition)
         {
             Vector3 clothPos = barPosition;
-            Vector2 clothSize = new Vector2(8, 4);
+            Vector3 holderPos = barPosition;
 
-            Vector3 holderPos = new Vector3(0, 4, 0);
+            Vector2 clothSize = new Vector2(8, 4);
 
             BodyDesc holsterBodyDesc = new BodyDesc();
             holsterBodyDesc.Mass = 10;
@@ -130,10 +129,9 @@ namespace PhysxCandyWrapperTutorials
             Actor holsterActor = scene.CreateActor(holsterActorDesc);
             holsterActor.GlobalPosition = holderPos;
 
-            Entity holsterEnt = sceneManager.CreateEntity("cube.mesh");
+            Entity holsterEnt = sceneManager.CreateEntity("holster.mesh");
             SceneNode holsterNode = sceneManager.RootSceneNode.CreateChildSceneNode();
             holsterNode.AttachObject(holsterEnt);
-            holsterNode.Scale(0.1f, 0.001f, 0.001f);
 
             ActorSceneNode holsterActorSceneNode = new ActorSceneNode(holsterActor, holsterNode);
             actorSceneNodes.Add(holsterActorSceneNode);
@@ -146,26 +144,28 @@ namespace PhysxCandyWrapperTutorials
             d6Desc.TwistMotion = D6JointMotions.Locked;
             d6Desc.Swing1Motion = D6JointMotions.Locked;
             d6Desc.Swing2Motion = D6JointMotions.Locked;
-            d6Desc.XMotion = D6JointMotions.Free;
+            d6Desc.XMotion = D6JointMotions.Locked;
             d6Desc.YMotion = D6JointMotions.Locked;
             d6Desc.ZMotion = D6JointMotions.Locked;
             scene.CreateJoint(d6Desc);
 
-            ClothDesc cd = new ClothDesc();
 
             MeshPtr mp = MeshManager.Singleton.CreatePlane("curtain", ResourceGroupManager.DEFAULT_RESOURCE_GROUP_NAME,
-                new Plane(Vector3.UNIT_Z, 0), clothSize.y, clothSize.x, 50, 50);
+                new Plane(Vector3.UNIT_Z, 0), clothSize.y, clothSize.x, 10, 10);
             Entity clothEnt = sceneManager.CreateEntity("Curtain", "curtain");
-            SceneNode clothSceneNode = sceneManager.RootSceneNode.CreateChildSceneNode();
+            SceneNode clothSceneNode = holsterNode.CreateChildSceneNode();
             clothEnt.SetMaterialName("wales");
             clothSceneNode.AttachObject(clothEnt);
+            clothSceneNode.Position = new Vector3(0, -4, 0);
 
             StaticMeshData meshdata = new StaticMeshData(mp);
-            cd.ClothMesh = CookClothMesh(meshdata, "nug.xcl");
-            cd.Thickness = 0.2f;
-            cd.Friction = 0.5f;
-            cd.GlobalPose.SetTrans(clothPos);
-            Cloth cloth = scene.CreateCloth(cd);
+            ClothDesc clothDesc = new ClothDesc();
+            clothDesc.ClothMesh = CookClothMesh(meshdata, "nug.xcl");
+            clothDesc.Thickness = 0.2f;
+            clothDesc.Friction = 0.5f;
+            clothDesc.Flags = ClothFlags.Visualization;
+
+            Cloth cloth = scene.CreateCloth(clothDesc);
             cloth.AttachToShape(holsterActor.Shapes[0], ClothAttachmentFlags.Twoway);
             
             clothEntRenderable = new ClothEntityRenderable(cloth, clothEnt);
@@ -174,22 +174,21 @@ namespace PhysxCandyWrapperTutorials
         private ClothMesh CookClothMesh(StaticMeshData meshdata, string cookingTarget)
         {
             CookingInterface.InitCooking();
-            using (var cd = new ClothMeshDesc())
+            using (var clothMeshDesc = new ClothMeshDesc())
             {
-                cd.PinPoints<float>(meshdata.Points, 0, 12);
-                cd.PinTriangles<uint>(meshdata.Indices, 0, 12);
+                clothMeshDesc.PinPoints<float>(meshdata.Points, 0, sizeof(float) * 3);
+                clothMeshDesc.PinTriangles<uint>(meshdata.Indices, 0, sizeof(uint) * 3);
+                clothMeshDesc.VertexCount = (uint)meshdata.Vertices.Length;
+                clothMeshDesc.TriangleCount = (uint)meshdata.Indices.Length / 3;
 
-                cd.VertexCount = (uint)meshdata.Vertices.Length;
-                cd.TriangleCount = (uint)meshdata.Indices.Length / 3;
+                string cookingTargetFullPath = Path.Combine(Environment.CurrentDirectory, "media", cookingTarget);
 
-                string xclFullPath = Path.Combine(Environment.CurrentDirectory, "media", cookingTarget);
+                if (File.Exists(cookingTargetFullPath)) File.Delete(cookingTargetFullPath);
 
-                if (File.Exists(xclFullPath)) File.Delete(xclFullPath);
-
-                FileStream xclStream = new FileStream(xclFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                FileStream xclStream = new FileStream(cookingTargetFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 ClothMesh clothMesh = null;
                 
-                if (CookingInterface.CookClothMesh(cd, xclStream))
+                if (CookingInterface.CookClothMesh(clothMeshDesc, xclStream))
                 {
                     xclStream.Close();
                     DataStreamPtr dsp = ResourceGroupManager.Singleton.OpenResource(cookingTarget);
@@ -203,6 +202,18 @@ namespace PhysxCandyWrapperTutorials
             }
         }
 
+        private ClothMesh CookClothMesh(string cookingTarget)
+        {
+            CookingInterface.InitCooking();
+            
+            DataStreamPtr dsp = ResourceGroupManager.Singleton.OpenResource(cookingTarget);
+            ClothMesh clothMesh = physics.CreateClothMesh(Helper.DataPtrToStream(dsp));
+
+            CookingInterface.CloseCooking();
+
+            return clothMesh;
+        }
+
         public override void Stop()
         {
             base.Stop();
@@ -210,11 +221,13 @@ namespace PhysxCandyWrapperTutorials
 
         public override void Update(float timeSinceLastFrame)
         {
+            clothEntRenderable.Cloth.WindAcceleration = new Vector3(0, 0, 10);
+
             clothEntRenderable.Update(timeSinceLastFrame);
 
             scene.FlushStream();
-            scene.FetchResults(SimulationStatuses.AllFinished, true);
             scene.Simulate(timeSinceLastFrame);
+            scene.FetchResults(SimulationStatuses.AllFinished, true);
 
             base.Update(timeSinceLastFrame);
         }

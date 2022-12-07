@@ -12,6 +12,11 @@ namespace PhysxCandyWrapperTutorials
         private Cloth cloth;
         private Entity entity;
 
+        public Cloth Cloth
+        {
+            get { return cloth; }
+        }
+
         public ClothEntityRenderable(Cloth cloth, Entity entity)
         {
             this.cloth = cloth;
@@ -69,6 +74,8 @@ namespace PhysxCandyWrapperTutorials
 
                 buffer.Unlock();
             }
+
+            mesh._setBounds(cloth.ValidBounds);
         }
     }
 }
