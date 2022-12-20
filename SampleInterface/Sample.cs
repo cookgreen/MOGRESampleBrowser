@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using org.ogre.framework;
 
-namespace PhysxCandyWrapperTutorials
+namespace Samples
 {
     public class Sample : SdkTrayListener, ISample
     {

@@ -7,7 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleBrowser", "SampleBrow
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleInterface", "SampleInterface\SampleInterface.csproj", "{CD79D144-58DD-4273-A225-5F72448CFA6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhysxCandyWrapperTutorials", "PhysxCandyWrapperTutorials\PhysxCandyWrapperTutorials.csproj", "{FF1BD5F7-8DDC-41E6-8C5F-C690398A7024}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{FF1BD5F7-8DDC-41E6-8C5F-C690398A7024}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mogre.Helper", "Mogre.Helper\Mogre.Helper.csproj", "{FAF7A43A-E39A-480E-858E-DCC61878E364}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,9 @@ Global
 		{FF1BD5F7-8DDC-41E6-8C5F-C690398A7024}.Debug|x86.Build.0 = Debug|x86
 		{FF1BD5F7-8DDC-41E6-8C5F-C690398A7024}.Release|x86.ActiveCfg = Release|x86
 		{FF1BD5F7-8DDC-41E6-8C5F-C690398A7024}.Release|x86.Build.0 = Release|x86
+		{FAF7A43A-E39A-480E-858E-DCC61878E364}.Debug|x86.ActiveCfg = Debug|x86
+		{FAF7A43A-E39A-480E-858E-DCC61878E364}.Debug|x86.Build.0 = Debug|x86
+		{FAF7A43A-E39A-480E-858E-DCC61878E364}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

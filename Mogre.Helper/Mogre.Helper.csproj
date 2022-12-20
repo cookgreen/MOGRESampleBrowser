@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FF1BD5F7-8DDC-41E6-8C5F-C690398A7024}</ProjectGuid>
+    <ProjectGuid>{FAF7A43A-E39A-480E-858E-DCC61878E364}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PhysxCandyWrapperTutorials</RootNamespace>
-    <AssemblyName>PhysxCandyWrapperTutorials</AssemblyName>
+    <RootNamespace>Mogre.Helper</RootNamespace>
+    <AssemblyName>Mogre.Helper</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -37,23 +37,8 @@
     <Reference Include="eyecm.PhysX">
       <HintPath>..\Lib\eyecm.PhysX.dll</HintPath>
     </Reference>
-    <Reference Include="Mogre, Version=1.7.1.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Mogre">
       <HintPath>..\Lib\Mogre.dll</HintPath>
-    </Reference>
-    <Reference Include="Mogre-Procedural">
-      <HintPath>..\Lib\Mogre-Procedural.dll</HintPath>
-    </Reference>
-    <Reference Include="Mogre_Procedural.MogreBites">
-      <HintPath>..\Lib\Mogre_Procedural.MogreBites.dll</HintPath>
-    </Reference>
-    <Reference Include="MOIS, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\MOIS.dll</HintPath>
-    </Reference>
-    <Reference Include="OgreFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\OgreFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,13 +51,6 @@
   <ItemGroup>
     <Compile Include="ClothEntityRenderable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SampleFlag.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SampleInterface\SampleInterface.csproj">
-      <Project>{cd79d144-58dd-4273-a225-5f72448cfa6a}</Project>
-      <Name>SampleInterface</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

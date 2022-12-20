@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PhysxCandyWrapperTutorials
+namespace Mogre.PhysX.Helper
 {
     public class ClothEntityRenderable
     {
@@ -40,8 +40,8 @@ namespace PhysxCandyWrapperTutorials
                     for (uint j = 0; j < vd.vertexCount; j++)
                     {
                         Vector3 vect = cloth.GetPosition(j);
-                        posElement.BaseVertexPointerToElement(ptr, &arr);
 
+                        posElement.BaseVertexPointerToElement(ptr, &arr);
                         *arr = vect.x;
                         arr[1] = vect.y;
                         arr[2] = vect.z;
@@ -51,6 +51,18 @@ namespace PhysxCandyWrapperTutorials
 
                     buffer.Unlock();
                 }
+
+                IndexData indexData = subMesh.indexData;
+                HardwareIndexBufferSharedPtr indexBuf = indexData.indexBuffer;
+                HardwareIndexBuffer.IndexType indexType = indexBuf.Type;
+                uint* pLong = (uint*)(indexBuf.Lock(HardwareBuffer.LockOptions.HBL_NORMAL));
+                ushort* pShort = (ushort*)pLong;
+
+                for (uint j = 0; j < indexData.indexCount; j++)
+                {
+                }
+
+                indexBuf.Unlock();
             }
 
             if (mesh.sharedVertexData != null)
@@ -63,8 +75,8 @@ namespace PhysxCandyWrapperTutorials
                 for (uint j = 0; j < vd.vertexCount; j++)
                 {
                     Vector3 vect = cloth.GetPosition(j);
-                    posElement.BaseVertexPointerToElement(ptr, &arr);
 
+                    posElement.BaseVertexPointerToElement(ptr, &arr);
                     *arr = vect.x;
                     arr[1] = vect.y;
                     arr[2] = vect.z;

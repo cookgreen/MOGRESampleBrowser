@@ -1,5 +1,6 @@
 ﻿using Mogre;
 using Mogre.PhysX;
+using Mogre.PhysX.Helper;
 using Mogre_Procedural.MogreBites;
 using org.ogre.framework;
 using SampleInterface;
@@ -9,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace PhysxCandyWrapperTutorials
+namespace Samples
 {
     public class SampleFlag : Sample
     {
