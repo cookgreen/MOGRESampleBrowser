@@ -66,6 +66,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleFlag.cs" />
+    <Compile Include="SampleURDF.cs" />
+    <Compile Include="URDFRobot.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mogre.Helper\Mogre.Helper.csproj">

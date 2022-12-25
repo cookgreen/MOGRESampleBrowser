@@ -20,9 +20,9 @@ namespace Samples
 
         private ClothEntityRenderable clothEntRenderable;
 
-        public override string Name { get { return "PhysxSample_Cloth"; } }
+        public override string Name { get { return "SamplePhysx_Cloth"; } }
         public override string Thumb { get { return "Thumb_Cloth.png"; } }
-        public override string Desc { get { return "PhysxSample_Cloth"; } }
+        public override string Desc { get { return "SamplePhysx_Cloth"; } }
 
         public override void Start()
         {
