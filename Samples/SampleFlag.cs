@@ -1,6 +1,6 @@
 ﻿using Mogre;
 using Mogre.PhysX;
-using Mogre.PhysX.Helper;
+using Mogre.Helper.PhysX;
 using Mogre_Procedural.MogreBites;
 using org.ogre.framework;
 using SampleInterface;

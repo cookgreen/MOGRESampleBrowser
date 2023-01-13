@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Samples
 {
-    public class URDFRobot
+    public class SampleVehicle
     {
     }
 }

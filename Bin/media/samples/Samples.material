@@ -1,0 +1,27 @@
+material ThumbPhysxDemo_Cloth
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Thumb_Cloth.png
+			}
+		}
+	}
+}
+
+material ThumbPhysxDemo_NewtonsCradle
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Thumb_NewtonsCradle.png
+			}
+		}
+	}
+}
