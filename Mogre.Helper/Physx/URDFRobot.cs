@@ -7,14 +7,14 @@ namespace Mogre.Helper.PhysX
 {
     public class URDFRobot
     {
-        public URDFRobot(string xmlPath)
+        public URDFRobot(string xmlPath, bool isKinematic, bool isRandomCollisionColor)
         {
 
         }
 
-        public URDFRobot(DataStreamPtr dataStream)
+        public URDFRobot(DataStreamPtr dataStream, bool isKinematic, bool isRandomCollisionColor)
         {
-
+            
         }
 
         public void Update(float deltaTime)

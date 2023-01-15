@@ -52,17 +52,17 @@ namespace Mogre.Helper.PhysX
                     buffer.Unlock();
                 }
 
-                IndexData indexData = subMesh.indexData;
-                HardwareIndexBufferSharedPtr indexBuf = indexData.indexBuffer;
-                HardwareIndexBuffer.IndexType indexType = indexBuf.Type;
-                uint* pLong = (uint*)(indexBuf.Lock(HardwareBuffer.LockOptions.HBL_NORMAL));
-                ushort* pShort = (ushort*)pLong;
-
-                for (uint j = 0; j < indexData.indexCount; j++)
-                {
-                }
-
-                indexBuf.Unlock();
+                //IndexData indexData = subMesh.indexData;
+                //HardwareIndexBufferSharedPtr indexBuf = indexData.indexBuffer;
+                //HardwareIndexBuffer.IndexType indexType = indexBuf.Type;
+                //uint* pLong = (uint*)(indexBuf.Lock(HardwareBuffer.LockOptions.HBL_NORMAL));
+                //ushort* pShort = (ushort*)pLong;
+                //
+                //for (uint j = 0; j < indexData.indexCount; j++)
+                //{
+                //}
+                //
+                //indexBuf.Unlock();
             }
 
             if (mesh.sharedVertexData != null)

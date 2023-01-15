@@ -18,6 +18,7 @@ namespace SampleBrowser
     {
         protected bool m_bQuit;
 
+        private SelectMenu samplesCategory;
         private SelectMenu sampleChooseMenu;
         private Label lbSampleTitle;
         private TextBox txtSampleDesc;
@@ -39,39 +40,7 @@ namespace SampleBrowser
             OgreFramework.Instance.log.LogMessage("Entering MainMenu...");
             m_bQuit = false;
 
-            samples = new List<ISample>();
-            string fullPath = Environment.CurrentDirectory;
-            DirectoryInfo di = new DirectoryInfo(fullPath);
-            foreach (FileInfo file in di.GetFiles())
-            {
-                if (file.Extension == ".dll")
-                {
-                    try
-                    {
-                        var assembly = Assembly.LoadFile(file.FullName);
-                        Type[] types = assembly.GetTypes();
-                        foreach (var type in types)
-                        {
-                            if (type.GetInterface("ISample") != null && type.Name != "Sample")
-                            {
-                                ISample sample = assembly.CreateInstance(type.FullName) as ISample;
-                                sample.Setup(new object[] { 
-                                    OgreFramework.Instance.root,
-                                    OgreFramework.Instance.viewport,
-                                    OgreFramework.Instance.trayMgr,
-                                    OgreFramework.Instance.mouse,
-                                    OgreFramework.Instance.keyboard,
-                                });
-                                samples.Add(sample);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }
-            }
+            loadSamples();
 
             sampleThumbOverlyContainers = new List<OverlayContainer>();
 
@@ -98,7 +67,7 @@ namespace SampleBrowser
 
             setupUI();
 
-            setupModMenu();
+            setupSampleMenu();
 
             OgreFramework.Instance.mouse.MouseMoved += mouseMoved;
             OgreFramework.Instance.mouse.MousePressed += mousePressed;
@@ -107,6 +76,43 @@ namespace SampleBrowser
             OgreFramework.Instance.keyboard.KeyReleased += keyReleased;
 
             OgreFramework.Instance.root.FrameRenderingQueued += FrameRenderingQueued;
+        }
+
+        private void loadSamples()
+        {
+            samples = new List<ISample>();
+            string fullPath = Environment.CurrentDirectory;
+            DirectoryInfo di = new DirectoryInfo(fullPath);
+            foreach (FileInfo file in di.GetFiles())
+            {
+                if (file.Extension == ".dll")
+                {
+                    try
+                    {
+                        var assembly = Assembly.LoadFile(file.FullName);
+                        Type[] types = assembly.GetTypes();
+                        foreach (var type in types)
+                        {
+                            if (type.GetInterface("ISample") != null && type.Name != "Sample")
+                            {
+                                ISample sample = assembly.CreateInstance(type.FullName) as ISample;
+                                sample.Setup(new object[] {
+                                    OgreFramework.Instance.root,
+                                    OgreFramework.Instance.viewport,
+                                    OgreFramework.Instance.trayMgr,
+                                    OgreFramework.Instance.mouse,
+                                    OgreFramework.Instance.keyboard,
+                                });
+                                samples.Add(sample);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
         }
 
         private bool FrameRenderingQueued(FrameEvent evt)
@@ -170,12 +176,12 @@ namespace SampleBrowser
             txtSampleDesc = OgreFramework.Instance.trayMgr.createTextBox(TrayLocation.TL_LEFT, "txtSampleInfo", "Sample Info", 250, 208);
             txtSampleDesc.setCaption("Sample Info");
             
-            sampleChooseMenu = OgreFramework.Instance.trayMgr.createThickSelectMenu(TrayLocation.TL_LEFT, "smSample", "Select Sample", 250, 10);
-            sampleChooseMenu.setCaption("Select Sample");
+            sampleChooseMenu = OgreFramework.Instance.trayMgr.createThickSelectMenu(TrayLocation.TL_LEFT, "smSampleMenu", "Select Sample", 250, 10);
             sampleChooseMenu.setItems(samples.Select(o => o.Name).ToStringVector());
             
-            sliderSample = OgreFramework.Instance.trayMgr.createThickSlider(TrayLocation.TL_LEFT, "slderSamples", "Slider Samples", 250, 80, 0, 0, 0);
-            sliderSample.setCaption("Slider Samples");
+            sliderSample = OgreFramework.Instance.trayMgr.createThickSlider(TrayLocation.TL_LEFT, "sliderSamples", "Slide Samples", 250, 80, 0, 0, 0);
+            sliderSample.setRange(1, samples.Count, (uint)samples.Count);
+
             if (samples.Count > 0)
             {
                 lbSampleTitle.setCaption(sampleChooseMenu.getSelectedItem());
@@ -266,6 +272,26 @@ namespace SampleBrowser
             return true;
         }
 
+        public override void sliderMoved(Slider slider)
+        {
+            string denom = "/" + sampleChooseMenu.getNumItems();
+            slider.setValueCaption(slider.getValueCaption() + denom);
+
+            float val = slider.getValue() - 1;
+
+            if (sampleChooseMenu.getSelectionIndex() != -1 && sampleChooseMenu.getSelectionIndex() != val)
+                sampleChooseMenu.selectItem((uint)(val));
+        }
+
+        public override void itemSelected(SelectMenu menu)
+        {
+            if(menu == sampleChooseMenu)
+            {
+                if (sliderSample.getValue() != menu.getSelectionIndex() + 1)
+                    sliderSample.setValue(menu.getSelectionIndex() + 1);
+            }
+        }
+
         public override void buttonHit(Button button)
         {
             if (button.getName() == "btnQuit")
@@ -293,11 +319,11 @@ namespace SampleBrowser
         }
 
 
-        private void setupModMenu()
+        private void setupSampleMenu()
         {
-            MaterialPtr thumbMat = MaterialManager.Singleton.Create("ModThumbnail", "General");
+            MaterialPtr thumbMat = MaterialManager.Singleton.Create("SampleThumbnail", "General");
             thumbMat.GetTechnique(0).GetPass(0).CreateTextureUnitState();
-            MaterialPtr templateMat = MaterialManager.Singleton.GetByName("ModThumbnail");
+            MaterialPtr templateMat = MaterialManager.Singleton.GetByName("SampleThumbnail");
 
             foreach (var sample in samples)
             {

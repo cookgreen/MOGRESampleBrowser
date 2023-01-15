@@ -25,3 +25,17 @@ material ThumbPhysxDemo_NewtonsCradle
 		}
 	}
 }
+
+material ThumbPhysxDemo_URDF
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Thumb_URDF.png
+			}
+		}
+	}
+}
